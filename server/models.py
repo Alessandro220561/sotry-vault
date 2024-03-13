@@ -23,6 +23,10 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
     
+    serialize_rules = ('-reading_logs.user', )
+
+    reading_logs = db.relationship("ReadingLog", back_populates="user")
+    
 class Book(db.Model, SerializerMixin):
     __tablename__ = 'books'
 
@@ -32,6 +36,10 @@ class Book(db.Model, SerializerMixin):
     genre = db.Column(db.String)
     pages = db.Column(db.Integer)
 
+    serialize_rules = ('-reading_logs.book', )
+
+    reading_logs = db.relationship("ReadingLog", back_populates="book")
+
 class ReadingLog(db.Model, SerializerMixin):
     __tablename__ = 'reading_logs'
 
@@ -40,3 +48,8 @@ class ReadingLog(db.Model, SerializerMixin):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)    
+
+    serialize_rules = ('-user.reading_logs', '-book.reading_logs')
+
+    user = db.relationship("User", back_populates="reading_logs")
+    book = db.relationship("Book", back_populates="reading_logs")
