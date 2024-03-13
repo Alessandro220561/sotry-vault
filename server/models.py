@@ -22,3 +22,12 @@ class User(db.Model, SerializerMixin):
 
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+    
+class Book(db.Model, SerializerMixin):
+    __tablename__ = 'books'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    author = db.Column(db.String)
+    genre = db.Column(db.String)
+    pages = db.Column(db.Integer)
